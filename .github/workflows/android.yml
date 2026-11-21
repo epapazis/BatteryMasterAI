@@ -23,9 +23,7 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - uses: android-actions/setup-android@v3
-
-      # Installs Gradle directly, so the build works even if gradlew or the
+         # Installs Gradle directly, so the build works even if gradlew or the
       # wrapper .jar was lost during a browser upload.
       - uses: gradle/actions/setup-gradle@v5
         with:
