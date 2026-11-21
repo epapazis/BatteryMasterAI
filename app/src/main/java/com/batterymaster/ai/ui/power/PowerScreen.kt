@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.ElectricalServices
 import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material.icons.outlined.Thermostat
+import androidx.compose.material13.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -54,6 +55,7 @@ import com.batterymaster.ai.ui.home.PredictionTile
 import com.batterymaster.ai.ui.theme.LocalDataColors
 import com.batterymaster.ai.ui.util.Format
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PowerScreen(padding: PaddingValues, onOpenSession: (Long) -> Unit, vm: PowerViewModel = hiltViewModel()) {
     val st by vm.state.collectAsStateWithLifecycle()
