@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="window_bg">#FFF7F9F8</color>
+    <color name="brand">#FF0F8A6A</color>
+    <color name="launcher_bg">#FF0B3D33</color>
+    <color name="widget_bg">#E6101614</color>
+    <color name="widget_text">#FFFFFFFF</color>
+    <color name="widget_subtext">#B3FFFFFF</color>
+</resources>

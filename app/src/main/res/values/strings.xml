@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Battery Master AI</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_health">Health</string>
+    <string name="nav_power">Charging</string>
+    <string name="nav_analytics">Analytics</string>
+    <string name="nav_doctor">AI Doctor</string>
+    <string name="nav_settings">Settings</string>
+    <string name="session_details">Session details</string>
+    <string name="back">Back</string>
+    <string name="tab_charging">Charging</string>
+    <string name="tab_discharging">Discharging</string>
+
+    <!-- Common -->
+    <string name="save">Save</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="change">Change</string>
+    <string name="send">Send</string>
+    <string name="version">Version</string>
+
+    <!-- Metrics -->
+    <string name="temperature">Temperature</string>
+    <string name="temperature_unavailable">Temperature n/a</string>
+    <string name="voltage">Voltage</string>
+    <string name="current">Current</string>
+    <string name="power">Power</string>
+    <string name="health">Health</string>
+    <string name="est_capacity">Est. capacity</string>
+    <string name="degradation">Wear</string>
+    <string name="cycle_count">Charge cycles</string>
+    <string name="drain_rate">Drain rate</string>
+    <string name="runtime_left">Time left</string>
+    <string name="time_to_target">To %1$d%%</string>
+    <string name="time_to_full">To full</string>
+    <string name="runtime_unavailable">Needs ~20 min of unplugged data</string>
+    <string name="charge_rate_unavailable">Needs ~10 min of charging data</string>
+    <string name="capacity_needs_session">Needs a charge covering 30%+ with monitoring on</string>
+    <string name="enter_design_capacity">Enter design capacity on the Health screen</string>
+    <string name="needs_health_pct">Needs a health percentage</string>
+
+    <!-- Home -->
+    <string name="reading_battery">Reading battery…</string>
+    <string name="monitoring_off_title">Continuous monitoring is off</string>
+    <string name="monitoring_off_body">The app still samples about every 15 minutes, but charging sessions, capacity estimates and target alerts are much more accurate with continuous monitoring. It shows a silent notification while active.</string>
+    <string name="enable_monitoring">Turn on monitoring</string>
+    <string name="charging_target_value">Charging target: %1$d%%</string>
+    <string name="latest_insight">Latest insight</string>
+    <string name="insight_collecting">Collecting data. Insights appear after a few hours of history.</string>
+    <string name="open_doctor">Open AI Doctor</string>
+    <string name="open_charts">View charts</string>
+
+    <!-- Health -->
+    <string name="design_capacity">Design capacity</string>
+    <string name="design_capacity_help">Android has no public API for the original rated capacity. Enter it from your phone\'s spec sheet to see a health percentage. Leave empty if unknown.</string>
+    <string name="capacity_history">Capacity history</string>
+    <string name="methodology">How this is estimated</string>
+    <string name="counter_not_capacity">The charge counter reports charge stored right now, not the battery\'s total capacity. Capacity is derived from how much the counter rises over a long charge.</string>
+    <string name="session_estimates">Estimates from charging sessions</string>
+    <string name="no_estimates">No long charging sessions recorded yet.</string>
+
+    <!-- Power -->
+    <string name="current_session">Current session</string>
+    <string name="charging_analysis">Charging analysis</string>
+    <string name="discharge_analysis_7d">Discharge analysis (7 days)</string>
+    <string name="speed_comparison">Charging speed by session</string>
+    <string name="drain_comparison">Drain rate by session</string>
+    <string name="protection_history">Charging protection history</string>
+    <string name="charging_history">Charging sessions</string>
+    <string name="discharge_history">Discharge sessions</string>
+    <string name="drain_estimate_note">Screen-on/off drain is estimated from battery level changes. Android doesn\'t expose exact per-app energy use on most devices.</string>
+
+    <!-- Analytics -->
+    <string name="compare_previous">Compare</string>
+    <string name="no_chart_data">No measurements in this period. Charts fill in as the app records data; turn on continuous monitoring for detailed history.</string>
+    <string name="prediction_disclaimer">Forecasts extend the trend of your own capacity estimates. They are not a guarantee and can\'t predict a replacement date.</string>
+
+    <!-- Doctor -->
+    <string name="doctor_title">Battery Doctor</string>
+    <string name="reanalyze">Analyse again</string>
+    <string name="share_pdf">Share PDF report</string>
+    <string name="show_scoring">How the score works</string>
+    <string name="hide_scoring">Hide scoring rules</string>
+    <string name="ask_assistant">Ask the battery assistant</string>
+    <string name="assistant_privacy">Answers are generated on this device from your recorded measurements. Nothing is sent online.</string>
+    <string name="ask_hint">Ask about your battery…</string>
+    <string name="clear_conversation">Clear conversation</string>
+
+    <!-- Settings -->
+    <string name="section_monitoring">Monitoring</string>
+    <string name="continuous_monitoring">Continuous monitoring</string>
+    <string name="continuous_monitoring_help">Listens for Android\'s battery broadcasts and records a reading at most once a minute while charging and every 5 minutes otherwise. Its own battery cost is small, but you can turn it off at any time.</string>
+    <string name="section_protection">Charging protection</string>
+    <string name="alert_at_target">Alert when target is reached</string>
+    <string name="alert_when_full">Alert when fully charged</string>
+    <string name="protection_method">Method: %1$s</string>
+    <string name="allow_notifications">Allow notifications</string>
+    <string name="open_battery_settings">System battery settings</string>
+    <string name="section_alerts">Alerts</string>
+    <string name="low_battery_alert">Low battery alert (%1$d%%)</string>
+    <string name="temp_alert">High temperature alert (%1$d °C)</string>
+    <string name="alert_sound">Sound and vibration</string>
+    <string name="notification_settings">Notification settings</string>
+    <string name="section_appearance">Appearance &amp; language</string>
+    <string name="dynamic_color">Use wallpaper colours</string>
+    <string name="language">Language</string>
+    <string name="language_value">English</string>
+    <string name="app_language_settings">App language settings</string>
+    <string name="section_data">Data</string>
+    <string name="stored_measurements">Stored measurements</string>
+    <string name="retention">Keep detailed measurements for</string>
+    <string name="retention_note">Capacity estimates are always kept so long-term health trends survive.</string>
+    <string name="export_measurements">Export measurements</string>
+    <string name="export_sessions">Export sessions</string>
+    <string name="delete_all_data">Delete all data</string>
+    <string name="delete_confirm">This permanently deletes all measurements, sessions, capacity estimates and protection history stored on this device.</string>
+    <string name="section_compatibility">Device compatibility</string>
+    <string name="current_calibration">Current sensor calibration (learned)</string>
+    <string name="reset_calibration">Reset calibration</string>
+    <string name="section_about">Privacy &amp; about</string>
+    <string name="privacy_title">Privacy</string>
+    <string name="privacy_body">All data stays on this device. The app has no internet permission, no accounts, no analytics and no ads. Exports are only created when you ask, and Android backup follows your system settings.</string>
+    <string name="limitations_title">Known Android limitations</string>
+    <string name="limitations_body">• Regular apps can\'t stop charging; protection works by alerting you.\n• Design capacity isn\'t exposed by Android.\n• Current sensors differ by manufacturer; the app learns units and direction and marks values until verified.\n• Background recording is limited by Doze; continuous monitoring improves precision.\n• Per-app energy use isn\'t available to regular apps.</string>
+
+    <!-- Notifications -->
+    <string name="channel_monitoring">Monitoring status</string>
+    <string name="channel_monitoring_desc">Silent notification shown while continuous monitoring is on</string>
+    <string name="channel_alerts">Battery alerts</string>
+    <string name="channel_alerts_desc">Charging target, full charge, low battery and temperature alerts</string>
+    <string name="channel_alerts_quiet">Battery alerts (silent)</string>
+    <string name="channel_alerts_quiet_desc">The same alerts without sound or vibration</string>
+    <string name="monitoring_active">Battery monitoring active</string>
+    <string name="monitoring_starting">Starting…</string>
+    <string name="alert_target_title">Charging target reached: %1$d%%</string>
+    <string name="alert_target_text">Unplug now to keep the battery at your chosen level. This app can\'t stop charging by itself on this device.</string>
+    <string name="alert_full_title">Battery fully charged</string>
+    <string name="alert_full_text">You can unplug your charger.</string>
+    <string name="alert_low_title">Battery low: %1$d%%</string>
+    <string name="alert_low_text">Plug in soon to avoid a deep discharge.</string>
+    <string name="alert_temp_title">Battery is hot: %1$.1f °C</string>
+    <string name="alert_temp_text">Let the phone cool down. Avoid fast charging, gaming or direct sun until it does.</string>
+
+    <!-- Widget & tile -->
+    <string name="widget_name">Battery status</string>
+    <string name="widget_description">Battery level, status and temperature</string>
+    <string name="widget_no_data">No data yet</string>
+    <string name="widget_updated">Updated %1$s</string>
+    <string name="tile_label">Battery</string>
+</resources>
