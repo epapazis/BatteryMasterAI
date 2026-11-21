@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Battery Master AI</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Αρχική</string>
+    <string name="nav_health">Υγεία</string>
+    <string name="nav_power">Φόρτιση</string>
+    <string name="nav_analytics">Αναλύσεις</string>
+    <string name="nav_doctor">AI Γιατρός</string>
+    <string name="nav_settings">Ρυθμίσεις</string>
+    <string name="session_details">Λεπτομέρειες συνεδρίας</string>
+    <string name="back">Πίσω</string>
+    <string name="tab_charging">Φόρτιση</string>
+    <string name="tab_discharging">Αποφόρτιση</string>
+
+    <!-- Common -->
+    <string name="save">Αποθήκευση</string>
+    <string name="apply">Εφαρμογή</string>
+    <string name="cancel">Ακύρωση</string>
+    <string name="delete">Διαγραφή</string>
+    <string name="change">Αλλαγή</string>
+    <string name="send">Αποστολή</string>
+    <string name="version">Έκδοση</string>
+
+    <!-- Metrics -->
+    <string name="temperature">Θερμοκρασία</string>
+    <string name="temperature_unavailable">Θερμοκρασία μ/δ</string>
+    <string name="voltage">Τάση</string>
+    <string name="current">Ρεύμα</string>
+    <string name="power">Ισχύς</string>
+    <string name="health">Υγεία</string>
+    <string name="est_capacity">Εκτιμ. χωρητικότητα</string>
+    <string name="degradation">Φθορά</string>
+    <string name="cycle_count">Κύκλοι φόρτισης</string>
+    <string name="drain_rate">Ρυθμός εκφόρτισης</string>
+    <string name="runtime_left">Υπολειπόμενος χρόνος</string>
+    <string name="time_to_target">Έως %1$d%%</string>
+    <string name="time_to_full">Έως πλήρη</string>
+    <string name="runtime_unavailable">Χρειάζονται ~20 λεπτά δεδομένων χωρίς φορτιστή</string>
+    <string name="charge_rate_unavailable">Χρειάζονται ~10 λεπτά δεδομένων φόρτισης</string>
+    <string name="capacity_needs_session">Χρειάζεται φόρτιση 30%+ με ενεργή παρακολούθηση</string>
+    <string name="enter_design_capacity">Καταχωρήστε την ονομαστική χωρητικότητα στην οθόνη Υγεία</string>
+    <string name="needs_health_pct">Χρειάζεται ποσοστό υγείας</string>
+
+    <!-- Home -->
+    <string name="reading_battery">Ανάγνωση μπαταρίας…</string>
+    <string name="monitoring_off_title">Η συνεχής παρακολούθηση είναι ανενεργή</string>
+    <string name="monitoring_off_body">Η εφαρμογή καταγράφει περίπου κάθε 15 λεπτά, αλλά οι συνεδρίες φόρτισης, οι εκτιμήσεις χωρητικότητας και οι ειδοποιήσεις στόχου είναι πολύ πιο ακριβείς με τη συνεχή παρακολούθηση. Όσο είναι ενεργή, εμφανίζεται μια αθόρυβη ειδοποίηση.</string>
+    <string name="enable_monitoring">Ενεργοποίηση παρακολούθησης</string>
+    <string name="charging_target_value">Στόχος φόρτισης: %1$d%%</string>
+    <string name="latest_insight">Τελευταία παρατήρηση</string>
+    <string name="insight_collecting">Συλλογή δεδομένων. Οι παρατηρήσεις εμφανίζονται μετά από λίγες ώρες ιστορικού.</string>
+    <string name="open_doctor">Άνοιγμα AI Γιατρού</string>
+    <string name="open_charts">Προβολή γραφημάτων</string>
+
+    <!-- Health -->
+    <string name="design_capacity">Ονομαστική χωρητικότητα</string>
+    <string name="design_capacity_help">Το Android δεν παρέχει την αρχική ονομαστική χωρητικότητα. Καταχωρήστε την από τα τεχνικά χαρακτηριστικά του κινητού σας για να δείτε ποσοστό υγείας. Αφήστε το κενό αν δεν τη γνωρίζετε.</string>
+    <string name="capacity_history">Ιστορικό χωρητικότητας</string>
+    <string name="methodology">Πώς γίνεται η εκτίμηση</string>
+    <string name="counter_not_capacity">Ο μετρητής φορτίου δείχνει το φορτίο που είναι αποθηκευμένο τώρα, όχι τη συνολική χωρητικότητα. Η χωρητικότητα υπολογίζεται από το πόσο αυξάνεται ο μετρητής σε μια μεγάλη φόρτιση.</string>
+    <string name="session_estimates">Εκτιμήσεις από συνεδρίες φόρτισης</string>
+    <string name="no_estimates">Δεν έχουν καταγραφεί ακόμη μεγάλες συνεδρίες φόρτισης.</string>
+
+    <!-- Power -->
+    <string name="current_session">Τρέχουσα συνεδρία</string>
+    <string name="charging_analysis">Ανάλυση φόρτισης</string>
+    <string name="discharge_analysis_7d">Ανάλυση αποφόρτισης (7 ημέρες)</string>
+    <string name="speed_comparison">Ταχύτητα φόρτισης ανά συνεδρία</string>
+    <string name="drain_comparison">Ρυθμός εκφόρτισης ανά συνεδρία</string>
+    <string name="protection_history">Ιστορικό προστασίας φόρτισης</string>
+    <string name="charging_history">Συνεδρίες φόρτισης</string>
+    <string name="discharge_history">Συνεδρίες αποφόρτισης</string>
+    <string name="drain_estimate_note">Η κατανάλωση με οθόνη αναμμένη/σβηστή εκτιμάται από τις αλλαγές του επιπέδου μπαταρίας. Στις περισσότερες συσκευές το Android δεν δίνει ακριβή κατανάλωση ανά εφαρμογή.</string>
+
+    <!-- Analytics -->
+    <string name="compare_previous">Σύγκριση</string>
+    <string name="no_chart_data">Δεν υπάρχουν μετρήσεις σε αυτό το διάστημα. Τα γραφήματα συμπληρώνονται καθώς η εφαρμογή καταγράφει δεδομένα· ενεργοποιήστε τη συνεχή παρακολούθηση για λεπτομερές ιστορικό.</string>
+    <string name="prediction_disclaimer">Οι προβλέψεις προεκτείνουν την τάση των δικών σας εκτιμήσεων χωρητικότητας. Δεν αποτελούν εγγύηση και δεν μπορούν να προβλέψουν ημερομηνία αντικατάστασης.</string>
+
+    <!-- Doctor -->
+    <string name="doctor_title">Γιατρός μπαταρίας</string>
+    <string name="reanalyze">Νέα ανάλυση</string>
+    <string name="share_pdf">Κοινοποίηση αναφοράς PDF</string>
+    <string name="show_scoring">Πώς υπολογίζεται η βαθμολογία</string>
+    <string name="hide_scoring">Απόκρυψη κανόνων βαθμολογίας</string>
+    <string name="ask_assistant">Ρωτήστε τον βοηθό μπαταρίας</string>
+    <string name="assistant_privacy">Οι απαντήσεις δημιουργούνται σε αυτή τη συσκευή από τις μετρήσεις σας. Τίποτα δεν αποστέλλεται στο διαδίκτυο.</string>
+    <string name="ask_hint">Ρωτήστε για την μπαταρία σας…</string>
+    <string name="clear_conversation">Διαγραφή συνομιλίας</string>
+
+    <!-- Settings -->
+    <string name="section_monitoring">Παρακολούθηση</string>
+    <string name="continuous_monitoring">Συνεχής παρακολούθηση</string>
+    <string name="continuous_monitoring_help">Ακούει τα μηνύματα μπαταρίας του Android και καταγράφει μια μέτρηση το πολύ μία φορά το λεπτό κατά τη φόρτιση και κάθε 5 λεπτά διαφορετικά. Η δική της κατανάλωση είναι μικρή και μπορείτε να την απενεργοποιήσετε όποτε θέλετε.</string>
+    <string name="section_protection">Προστασία φόρτισης</string>
+    <string name="alert_at_target">Ειδοποίηση όταν επιτευχθεί ο στόχος</string>
+    <string name="alert_when_full">Ειδοποίηση όταν γεμίσει</string>
+    <string name="protection_method">Μέθοδος: %1$s</string>
+    <string name="allow_notifications">Να επιτρέπονται οι ειδοποιήσεις</string>
+    <string name="open_battery_settings">Ρυθμίσεις μπαταρίας συστήματος</string>
+    <string name="section_alerts">Ειδοποιήσεις</string>
+    <string name="low_battery_alert">Ειδοποίηση χαμηλής μπαταρίας (%1$d%%)</string>
+    <string name="temp_alert">Ειδοποίηση υψηλής θερμοκρασίας (%1$d °C)</string>
+    <string name="alert_sound">Ήχος και δόνηση</string>
+    <string name="notification_settings">Ρυθμίσεις ειδοποιήσεων</string>
+    <string name="section_appearance">Εμφάνιση και γλώσσα</string>
+    <string name="dynamic_color">Χρώματα από την ταπετσαρία</string>
+    <string name="language">Γλώσσα</string>
+    <string name="language_value">Ελληνικά</string>
+    <string name="app_language_settings">Ρυθμίσεις γλώσσας εφαρμογής</string>
+    <string name="section_data">Δεδομένα</string>
+    <string name="stored_measurements">Αποθηκευμένες μετρήσεις</string>
+    <string name="retention">Διατήρηση λεπτομερών μετρήσεων για</string>
+    <string name="retention_note">Οι εκτιμήσεις χωρητικότητας διατηρούνται πάντα, ώστε να μη χάνεται η μακροχρόνια τάση υγείας.</string>
+    <string name="export_measurements">Εξαγωγή μετρήσεων</string>
+    <string name="export_sessions">Εξαγωγή συνεδριών</string>
+    <string name="delete_all_data">Διαγραφή όλων των δεδομένων</string>
+    <string name="delete_confirm">Θα διαγραφούν οριστικά όλες οι μετρήσεις, οι συνεδρίες, οι εκτιμήσεις χωρητικότητας και το ιστορικό προστασίας που είναι αποθηκευμένα σε αυτή τη συσκευή.</string>
+    <string name="section_compatibility">Συμβατότητα συσκευής</string>
+    <string name="current_calibration">Βαθμονόμηση αισθητήρα ρεύματος (αυτόματη)</string>
+    <string name="reset_calibration">Επαναφορά βαθμονόμησης</string>
+    <string name="section_about">Απόρρητο και πληροφορίες</string>
+    <string name="privacy_title">Απόρρητο</string>
+    <string name="privacy_body">Όλα τα δεδομένα μένουν σε αυτή τη συσκευή. Η εφαρμογή δεν έχει άδεια πρόσβασης στο διαδίκτυο, λογαριασμούς, στατιστικά χρήσης ή διαφημίσεις. Οι εξαγωγές δημιουργούνται μόνο όταν το ζητήσετε και το αντίγραφο ασφαλείας του Android ακολουθεί τις ρυθμίσεις του συστήματός σας.</string>
+    <string name="limitations_title">Γνωστοί περιορισμοί του Android</string>
+    <string name="limitations_body">• Οι κανονικές εφαρμογές δεν μπορούν να σταματήσουν τη φόρτιση· η προστασία λειτουργεί με ειδοποίηση.\n• Το Android δεν παρέχει την ονομαστική χωρητικότητα.\n• Οι αισθητήρες ρεύματος διαφέρουν ανά κατασκευαστή· η εφαρμογή μαθαίνει μονάδες και κατεύθυνση και σημειώνει τις τιμές μέχρι να επιβεβαιωθούν.\n• Η καταγραφή στο παρασκήνιο περιορίζεται από τη λειτουργία Doze· η συνεχής παρακολούθηση βελτιώνει την ακρίβεια.\n• Η κατανάλωση ενέργειας ανά εφαρμογή δεν είναι διαθέσιμη στις κανονικές εφαρμογές.</string>
+
+    <!-- Notifications -->
+    <string name="channel_monitoring">Κατάσταση παρακολούθησης</string>
+    <string name="channel_monitoring_desc">Αθόρυβη ειδοποίηση όσο είναι ενεργή η συνεχής παρακολούθηση</string>
+    <string name="channel_alerts">Ειδοποιήσεις μπαταρίας</string>
+    <string name="channel_alerts_desc">Ειδοποιήσεις για στόχο φόρτισης, πλήρη φόρτιση, χαμηλή μπαταρία και θερμοκρασία</string>
+    <string name="channel_alerts_quiet">Ειδοποιήσεις μπαταρίας (αθόρυβες)</string>
+    <string name="channel_alerts_quiet_desc">Οι ίδιες ειδοποιήσεις χωρίς ήχο ή δόνηση</string>
+    <string name="monitoring_active">Η παρακολούθηση μπαταρίας είναι ενεργή</string>
+    <string name="monitoring_starting">Εκκίνηση…</string>
+    <string name="alert_target_title">Επιτεύχθηκε ο στόχος φόρτισης: %1$d%%</string>
+    <string name="alert_target_text">Αποσυνδέστε τώρα τον φορτιστή για να μείνει η μπαταρία στο επίπεδο που επιλέξατε. Η εφαρμογή δεν μπορεί να σταματήσει μόνη της τη φόρτιση σε αυτή τη συσκευή.</string>
+    <string name="alert_full_title">Η μπαταρία φορτίστηκε πλήρως</string>
+    <string name="alert_full_text">Μπορείτε να αποσυνδέσετε τον φορτιστή.</string>
+    <string name="alert_low_title">Χαμηλή μπαταρία: %1$d%%</string>
+    <string name="alert_low_text">Συνδέστε σύντομα τον φορτιστή για να αποφύγετε βαθιά αποφόρτιση.</string>
+    <string name="alert_temp_title">Η μπαταρία είναι ζεστή: %1$.1f °C</string>
+    <string name="alert_temp_text">Αφήστε το κινητό να κρυώσει. Αποφύγετε τη γρήγορη φόρτιση, τα παιχνίδια ή τον ήλιο μέχρι τότε.</string>
+
+    <!-- Widget & tile -->
+    <string name="widget_name">Κατάσταση μπαταρίας</string>
+    <string name="widget_description">Επίπεδο, κατάσταση και θερμοκρασία μπαταρίας</string>
+    <string name="widget_no_data">Δεν υπάρχουν δεδομένα ακόμη</string>
+    <string name="widget_updated">Ενημέρωση %1$s</string>
+    <string name="tile_label">Μπαταρία</string>
+</resources>
