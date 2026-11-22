@@ -39,6 +39,12 @@ data class SleepResult(
 object SleepAnalyzer {
     const val MIN_STRETCH_MS = 60 * 60_000L
 
+    /**
+     * Doze often delays readings by 30–60+ min at night. Drain here is measured from the
+     * levels at the start and end of the stretch (not integrated), so longer gaps are safe.
+     */
+    const val MAX_GAP_MS = 2 * 3_600_000L
+
     fun longestScreenOff(samplesUnsorted: List<SamplePoint>): SleepResult? {
         val s = samplesUnsorted.sortedBy { it.timestamp }
         var best: List<SamplePoint>? = null
@@ -57,7 +63,7 @@ object SleepAnalyzer {
                 close()
                 continue
             }
-            if (run.isNotEmpty() && p.timestamp - run.last().timestamp > GAP_MS) close()
+            if (run.isNotEmpty() && p.timestamp - run.last().timestamp > MAX_GAP_MS) close()
             run.add(p)
         }
         close()
