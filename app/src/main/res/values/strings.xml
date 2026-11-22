@@ -172,7 +172,6 @@
     <!-- Put your name between the tags to show it in Settings → About and in PDF reports. -->
         <string name="developer_name" 
     translatable="false">Skymnos_Eordaia</string>
-    </resources>
     <string name="apps_title">App power usage</string>
     <string name="apps_now">Battery current right now</string>
     <string name="apps_explain">Battery use is attributed to the app that was on screen between measurements. Android doesn\'t give regular apps exact per-app energy, so these are estimates; background activity counts toward the visible app or \"Screen off\".</string>
