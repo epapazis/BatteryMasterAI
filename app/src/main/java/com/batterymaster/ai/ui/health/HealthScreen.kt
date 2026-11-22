@@ -100,6 +100,41 @@ fun HealthScreen(padding: PaddingValues, vm: HealthViewModel = hiltViewModel()) 
         item {
             DesignCapacityCard(st.designCapacityMah, vm::setDesignCapacity)
         }
+        st.trend?.let { t ->
+            item {
+                AppCard {
+                    Text(stringResource(R.string.health_trend_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        stringResource(R.string.health_trend_body, t.fromMah, t.toMah, t.changePct, t.months, t.changePctPerYear),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    ReliabilityBadge(DataClass.ESTIMATED)
+                }
+            }
+        }
+        st.wear?.takeIf { it.sessions > 0 }?.let { w ->
+            item {
+                AppCard {
+                    Text(stringResource(R.string.wear_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                    InfoRow(stringResource(R.string.wear_cycles), Format.num(w.cycles, 1))
+                    InfoRow(stringResource(R.string.wear_weighted), Format.num(w.weightedCycles, 1))
+                    InfoRow(
+                        stringResource(R.string.wear_stress),
+                        "×" + Format.num(w.stressFactor, 2) + " · " + stringResource(
+                            when {
+                                w.stressFactor < 1.2 -> R.string.wear_gentle
+                                w.stressFactor < 1.6 -> R.string.wear_moderate
+                                else -> R.string.wear_harsh
+                            },
+                        ),
+                    )
+                    w.since?.let { InfoRow(stringResource(R.string.wear_since), Format.date(it)) }
+                    Text(stringResource(R.string.wear_explain), style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    ReliabilityBadge(DataClass.ESTIMATED)
+                }
+            }
+        }
         item {
             val accepted = st.estimates.filter { it.accepted && it.capacityMah != null }.sortedBy { it.timestamp }
             val series = buildList {

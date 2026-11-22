@@ -4,6 +4,8 @@ import androidx.room.withTransaction
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.batterymaster.ai.data.db.AppDatabase
 import com.batterymaster.ai.data.db.CapacityDao
+import com.batterymaster.ai.data.db.ChargerTestDao
+import com.batterymaster.ai.data.db.ChargerTestEntity
 import com.batterymaster.ai.data.db.ProtectionDao
 import com.batterymaster.ai.data.db.ProtectionEventEntity
 import com.batterymaster.ai.data.db.SampleDao
@@ -65,6 +67,7 @@ class HistoryRepository @Inject constructor(
     private val sessions: SessionDao,
     private val capacity: CapacityDao,
     private val protection: ProtectionDao,
+    private val chargerTests: ChargerTestDao,
 ) {
     fun observeLatestSample(): Flow<SamplePoint?> = samples.observeLatest().map { it?.toPoint() }
 
@@ -149,6 +152,13 @@ class HistoryRepository @Inject constructor(
             sessions.deleteAll()
             capacity.deleteAll()
             protection.deleteAll()
+            chargerTests.deleteAll()
         }
     }
+
+    fun observeChargerTests(): Flow<List<ChargerTestEntity>> = chargerTests.observeAll()
+
+    suspend fun addChargerTest(t: ChargerTestEntity): Long = chargerTests.insert(t)
+
+    suspend fun deleteChargerTest(id: Long) = chargerTests.delete(id)
 }

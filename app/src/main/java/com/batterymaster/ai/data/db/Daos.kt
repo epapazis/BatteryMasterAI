@@ -123,3 +123,18 @@ interface ProtectionDao {
     @Query("DELETE FROM protection_events")
     suspend fun deleteAll()
 }
+
+@Dao
+interface ChargerTestDao {
+    @Insert
+    suspend fun insert(t: ChargerTestEntity): Long
+
+    @Query("SELECT * FROM charger_tests ORDER BY avgCurrentMa DESC")
+    fun observeAll(): Flow<List<ChargerTestEntity>>
+
+    @Query("DELETE FROM charger_tests WHERE id = :id")
+    suspend fun delete(id: Long)
+
+    @Query("DELETE FROM charger_tests")
+    suspend fun deleteAll()
+}

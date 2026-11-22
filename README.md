@@ -103,6 +103,8 @@ widget/ tile/ notifications/ di/
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Optional continuous monitoring, used only after the user turns it on |
 | `RECEIVE_BOOT_COMPLETED` | Restart monitoring after a reboot, if it was enabled |
 | `VIBRATE` | Alert vibration |
+| `SYSTEM_ALERT_WINDOW` | Optional live-current overlay ("Display over other apps"), only after the user enables it |
+| `PACKAGE_USAGE_STATS` | Optional per-app usage estimate ("Usage access"), granted by the user in system settings |
 
 There is **no INTERNET permission**. All data stays on the device.
 

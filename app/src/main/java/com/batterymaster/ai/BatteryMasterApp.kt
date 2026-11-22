@@ -3,6 +3,7 @@ package com.batterymaster.ai
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.batterymaster.ai.background.DailySummaryWorker
 import com.batterymaster.ai.background.SampleWorker
 import com.batterymaster.ai.notifications.Notifier
 import dagger.hilt.android.HiltAndroidApp
@@ -20,5 +21,6 @@ class BatteryMasterApp : Application(), Configuration.Provider {
         super.onCreate()
         notifier.createChannels()
         SampleWorker.schedule(this)
+        DailySummaryWorker.schedule(this)
     }
 }

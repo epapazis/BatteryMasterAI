@@ -50,6 +50,17 @@ class NormalizersTest {
         assertEquals(Confidence.MEDIUM, unplugged.measurement.confidence)
     }
 
+    @Test fun `draining phone never shows positive current before direction is verified`() {
+        // Device reports +400 000 uA while unplugged and has never been seen charging.
+        val c = calibrate(null, 400_000, nCharge = 0, nDischarge = 12)
+        assertEquals(CurrentUnit.MICROAMPS, c.unit)
+        val r = CurrentNormalizer.normalize(c, 400_000, false, 0, "t") as Reading.Available
+        assertEquals(-400, r.measurement.value)
+        assertEquals(Confidence.MEDIUM, r.measurement.confidence)
+        val plugged = CurrentNormalizer.normalize(c, 1_200_000, true, 0, "t") as Reading.Available
+        assertEquals(1200, plugged.measurement.value)
+    }
+
     @Test fun `unknown unit is reported unavailable instead of guessed`() {
         val c = calibrate(null, -300, nCharge = 0, nDischarge = 3)
         assertEquals(CurrentUnit.UNKNOWN, c.unit)

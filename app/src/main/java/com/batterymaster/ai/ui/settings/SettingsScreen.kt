@@ -45,6 +45,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.batterymaster.ai.BuildConfig
 import com.batterymaster.ai.R
+import com.batterymaster.ai.data.prefs.OverlayColor
+import com.batterymaster.ai.data.prefs.OverlayCorner
+import com.batterymaster.ai.data.prefs.OverlaySize
 import com.batterymaster.ai.data.prefs.ThemeMode
 import com.batterymaster.ai.domain.compat.Support
 import com.batterymaster.ai.domain.protection.ProtectionMethod
@@ -62,6 +65,7 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
     val s = st.settings
     val context = LocalContext.current
     var confirmDelete by remember { mutableStateOf(false) }
+    var confirmRestore by remember { mutableStateOf<android.net.Uri?>(null) }
     val enableMonitoring = rememberNotificationPermissionRequest { vm.setMonitoring(true) }
     val requestNotif = rememberNotificationPermissionRequest { vm.refreshProtection() }
     val openBatterySettings = rememberOpenSystemBatterySettings()
@@ -71,6 +75,16 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
     }
     val sessionsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri ->
         uri?.let(vm::exportSessions)
+    }
+
+    val backupLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+        uri?.let(vm::exportBackup)
+    }
+    val restoreLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let { confirmRestore = it }
+    }
+    val overlayPermLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (Settings.canDrawOverlays(context)) vm.setOverlay(true)
     }
 
     LaunchedEffect(st.message) {
@@ -97,6 +111,53 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
             }
         }
 
+        // Live current overlay
+        item { SectionHeader(stringResource(R.string.section_overlay)) }
+        item {
+            AppCard {
+                SwitchRow(stringResource(R.string.overlay_toggle), s.overlayEnabled) { on ->
+                    when {
+                        !on -> vm.setOverlay(false)
+                        Settings.canDrawOverlays(context) -> vm.setOverlay(true)
+                        else -> overlayPermLauncher.launch(
+                            Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, android.net.Uri.parse("package:${context.packageName}")),
+                        )
+                    }
+                }
+                Text(stringResource(R.string.overlay_help), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (s.overlayEnabled) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(stringResource(R.string.overlay_position), style = MaterialTheme.typography.labelLarge)
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OverlayCorner.entries.forEach { c ->
+                            FilterChip(selected = s.overlayCorner == c, onClick = { vm.setOverlayCorner(c) },
+                                label = { Text(cornerLabel(c)) })
+                        }
+                    }
+                    Text(stringResource(R.string.overlay_size), style = MaterialTheme.typography.labelLarge)
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OverlaySize.entries.forEach { z ->
+                            FilterChip(selected = s.overlaySize == z, onClick = { vm.setOverlaySize(z) },
+                                label = { Text(sizeLabel(z)) })
+                        }
+                    }
+                    Text(stringResource(R.string.overlay_color), style = MaterialTheme.typography.labelLarge)
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OverlayColor.entries.forEach { c ->
+                            FilterChip(selected = s.overlayColor == c, onClick = { vm.setOverlayColor(c) },
+                                label = { Text(colorLabel(c)) })
+                        }
+                    }
+                    SwitchRow(stringResource(R.string.overlay_show_watts), s.overlayShowWatts, vm::setOverlayWatts)
+                    SwitchRow(stringResource(R.string.overlay_show_temp), s.overlayShowTemp, vm::setOverlayTemp)
+                    SwitchRow(stringResource(R.string.overlay_drag), s.overlayDraggable, vm::setOverlayDraggable)
+                    Text(stringResource(R.string.overlay_drag_help), style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        }
+
         // Charging protection
         item { SectionHeader(stringResource(R.string.section_protection)) }
         item {
@@ -114,6 +175,9 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
                 }
                 SwitchRow(stringResource(R.string.alert_at_target), s.targetAlertEnabled, vm::setTargetAlert)
                 SwitchRow(stringResource(R.string.alert_when_full), s.fullAlertEnabled, vm::setFullAlert)
+                SwitchRow(stringResource(R.string.target_alarm), s.targetAlarm, vm::setTargetAlarm)
+                Text(stringResource(R.string.target_alarm_help), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(8.dp))
                 st.protection?.let { p ->
                     Text(stringResource(R.string.protection_method, p.method.label), style = MaterialTheme.typography.labelLarge,
@@ -142,6 +206,20 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
                 Slider(value = temp, onValueChange = { temp = it }, valueRange = 35f..55f, steps = 19,
                     enabled = s.tempAlertEnabled, onValueChangeFinished = { vm.setTempC(temp) })
                 SwitchRow(stringResource(R.string.alert_sound), s.alertSound, vm::setSound)
+                SwitchRow(stringResource(R.string.quiet_hours), s.quietHoursEnabled, vm::setQuietHours)
+                if (s.quietHoursEnabled) {
+                    var qs by remember(s.quietStartHour) { mutableFloatStateOf(s.quietStartHour.toFloat()) }
+                    var qe by remember(s.quietEndHour) { mutableFloatStateOf(s.quietEndHour.toFloat()) }
+                    Text(stringResource(R.string.quiet_from, qs.toInt()), style = MaterialTheme.typography.bodyMedium)
+                    Slider(value = qs, onValueChange = { qs = it }, valueRange = 0f..23f, steps = 22,
+                        onValueChangeFinished = { vm.setQuietStart(qs.toInt()) })
+                    Text(stringResource(R.string.quiet_to, qe.toInt()), style = MaterialTheme.typography.bodyMedium)
+                    Slider(value = qe, onValueChange = { qe = it }, valueRange = 0f..23f, steps = 22,
+                        onValueChangeFinished = { vm.setQuietEnd(qe.toInt()) })
+                    Text(stringResource(R.string.quiet_help), style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                SwitchRow(stringResource(R.string.daily_summary), s.dailySummary, vm::setDailySummary)
                 TextButton(onClick = openNotifSettings) { Text(stringResource(R.string.notification_settings)) }
             }
         }
@@ -155,7 +233,7 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
                         SegmentedButton(
                             selected = s.themeMode == m, onClick = { vm.setTheme(m) },
                             shape = SegmentedButtonDefaults.itemShape(i, ThemeMode.entries.size),
-                        ) { Text(m.name.lowercase().replaceFirstChar { it.uppercase() }) }
+                        ) { Text(themeLabel(m), maxLines = 1) }
                     }
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -191,6 +269,10 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(onClick = { samplesLauncher.launch("battery-measurements.csv") }) { Text(stringResource(R.string.export_measurements)) }
                     OutlinedButton(onClick = { sessionsLauncher.launch("battery-sessions.csv") }) { Text(stringResource(R.string.export_sessions)) }
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(onClick = { backupLauncher.launch("battery-master-backup.db") }) { Text(stringResource(R.string.backup)) }
+                    OutlinedButton(onClick = { restoreLauncher.launch(arrayOf("*/*")) }) { Text(stringResource(R.string.restore)) }
                 }
                 TextButton(onClick = { confirmDelete = true }) {
                     Text(stringResource(R.string.delete_all_data), color = MaterialTheme.colorScheme.error)
@@ -247,8 +329,22 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
                 Text(stringResource(R.string.limitations_body), style = MaterialTheme.typography.bodySmall)
                 Spacer(Modifier.height(8.dp))
                 InfoRow(stringResource(R.string.version), BuildConfig.VERSION_NAME)
+                val developer = stringResource(R.string.developer_name)
+                if (developer.isNotBlank()) InfoRow(stringResource(R.string.developer), developer)
             }
         }
+    }
+
+    confirmRestore?.let { uri ->
+        AlertDialog(
+            onDismissRequest = { confirmRestore = null },
+            title = { Text(stringResource(R.string.restore)) },
+            text = { Text(stringResource(R.string.restore_confirm)) },
+            confirmButton = {
+                TextButton(onClick = { confirmRestore = null; vm.restoreBackup(uri) }) { Text(stringResource(R.string.restore)) }
+            },
+            dismissButton = { TextButton(onClick = { confirmRestore = null }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
 
     if (confirmDelete) {
@@ -265,6 +361,46 @@ fun SettingsScreen(padding: PaddingValues, vm: SettingsViewModel = hiltViewModel
         )
     }
 }
+
+@Composable
+private fun cornerLabel(c: OverlayCorner): String = stringResource(
+    when (c) {
+        OverlayCorner.TOP_LEFT -> R.string.corner_top_left
+        OverlayCorner.TOP_RIGHT -> R.string.corner_top_right
+        OverlayCorner.BOTTOM_LEFT -> R.string.corner_bottom_left
+        OverlayCorner.BOTTOM_RIGHT -> R.string.corner_bottom_right
+    },
+)
+
+@Composable
+private fun colorLabel(c: OverlayColor): String = stringResource(
+    when (c) {
+        OverlayColor.GREEN -> R.string.color_green
+        OverlayColor.WHITE -> R.string.color_white
+        OverlayColor.YELLOW -> R.string.color_yellow
+        OverlayColor.CYAN -> R.string.color_cyan
+        OverlayColor.AUTO -> R.string.color_auto
+    },
+)
+
+@Composable
+private fun themeLabel(m: ThemeMode): String = stringResource(
+    when (m) {
+        ThemeMode.SYSTEM -> R.string.theme_system
+        ThemeMode.LIGHT -> R.string.theme_light
+        ThemeMode.DARK -> R.string.theme_dark
+        ThemeMode.AMOLED -> R.string.theme_amoled
+    },
+)
+
+@Composable
+private fun sizeLabel(z: OverlaySize): String = stringResource(
+    when (z) {
+        OverlaySize.SMALL -> R.string.size_small
+        OverlaySize.MEDIUM -> R.string.size_medium
+        OverlaySize.LARGE -> R.string.size_large
+    },
+)
 
 @Composable
 private fun SwitchRow(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {

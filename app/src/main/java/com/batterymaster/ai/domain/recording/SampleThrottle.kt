@@ -20,6 +20,7 @@ object SampleThrottle {
         if (stateChanged) return true
         if (dt < MIN_INTERVAL_MS) return false
         if (last.screenOn != next.screenOn) return true
+        if (next.foregroundApp != null && last.foregroundApp != next.foregroundApp) return true
         if (last.levelPct != next.levelPct) return true
         val lt = last.temperatureC
         val nt = next.temperatureC

@@ -24,7 +24,16 @@ import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-enum class ThemeMode { SYSTEM, LIGHT, DARK }
+enum class ThemeMode { SYSTEM, LIGHT, DARK, AMOLED }
+
+enum class OverlayCorner { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT }
+
+enum class OverlaySize(val sp: Float) { SMALL(14f), MEDIUM(20f), LARGE(28f) }
+
+/** AUTO = green while charging, orange while draining. */
+enum class OverlayColor(val argb: Int) {
+    GREEN(0xFF00C853.toInt()), WHITE(0xFFFFFFFF.toInt()), YELLOW(0xFFFFD600.toInt()), CYAN(0xFF00E5FF.toInt()), AUTO(0)
+}
 
 data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
@@ -40,7 +49,29 @@ data class AppSettings(
     val alertSound: Boolean = true,
     val designCapacityMah: Int = 0,
     val retentionDays: Int = 365,
+    val overlayEnabled: Boolean = false,
+    val overlayCorner: OverlayCorner = OverlayCorner.BOTTOM_LEFT,
+    val overlaySize: OverlaySize = OverlaySize.MEDIUM,
+    /** Free position set by dragging, in pixels from top-left; -1 = use [overlayCorner]. */
+    val overlayX: Int = -1,
+    val overlayY: Int = -1,
+    val overlayDraggable: Boolean = false,
+    val overlayColor: OverlayColor = OverlayColor.GREEN,
+    val overlayShowWatts: Boolean = false,
+    val overlayShowTemp: Boolean = false,
+    val targetAlarm: Boolean = false,
+    val quietHoursEnabled: Boolean = false,
+    val quietStartHour: Int = 23,
+    val quietEndHour: Int = 7,
+    val dailySummary: Boolean = true,
 ) {
+    /** True if [hour] (0–23) falls inside the quiet window, which may wrap past midnight. */
+    fun isQuietHour(hour: Int): Boolean {
+        if (!quietHoursEnabled || quietStartHour == quietEndHour) return false
+        return if (quietStartHour < quietEndHour) hour in quietStartHour until quietEndHour
+        else hour >= quietStartHour || hour < quietEndHour
+    }
+
     val alertConfig: AlertConfig
         get() = AlertConfig(
             targetEnabled = targetAlertEnabled,
@@ -71,6 +102,20 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         val sound = booleanPreferencesKey("alert_sound")
         val design = intPreferencesKey("design_capacity")
         val retention = intPreferencesKey("retention_days")
+        val overlay = booleanPreferencesKey("overlay_enabled")
+        val overlayCorner = stringPreferencesKey("overlay_corner")
+        val overlaySize = stringPreferencesKey("overlay_size")
+        val overlayX = intPreferencesKey("overlay_x")
+        val overlayY = intPreferencesKey("overlay_y")
+        val overlayDrag = booleanPreferencesKey("overlay_drag")
+        val overlayColor = stringPreferencesKey("overlay_color")
+        val overlayWatts = booleanPreferencesKey("overlay_watts")
+        val overlayTemp = booleanPreferencesKey("overlay_temp")
+        val targetAlarm = booleanPreferencesKey("target_alarm")
+        val quiet = booleanPreferencesKey("quiet_enabled")
+        val quietStart = intPreferencesKey("quiet_start")
+        val quietEnd = intPreferencesKey("quiet_end")
+        val dailySummary = booleanPreferencesKey("daily_summary")
 
         // Learned device calibration
         val calUnit = stringPreferencesKey("cal_unit")
@@ -108,6 +153,20 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
             alertSound = p[K.sound] ?: d.alertSound,
             designCapacityMah = p[K.design] ?: d.designCapacityMah,
             retentionDays = p[K.retention] ?: d.retentionDays,
+            overlayEnabled = p[K.overlay] ?: d.overlayEnabled,
+            overlayCorner = safeEnum(p[K.overlayCorner], d.overlayCorner),
+            overlaySize = safeEnum(p[K.overlaySize], d.overlaySize),
+            overlayX = p[K.overlayX] ?: d.overlayX,
+            overlayY = p[K.overlayY] ?: d.overlayY,
+            overlayDraggable = p[K.overlayDrag] ?: d.overlayDraggable,
+            overlayColor = safeEnum(p[K.overlayColor], d.overlayColor),
+            overlayShowWatts = p[K.overlayWatts] ?: d.overlayShowWatts,
+            overlayShowTemp = p[K.overlayTemp] ?: d.overlayShowTemp,
+            targetAlarm = p[K.targetAlarm] ?: d.targetAlarm,
+            quietHoursEnabled = p[K.quiet] ?: d.quietHoursEnabled,
+            quietStartHour = p[K.quietStart] ?: d.quietStartHour,
+            quietEndHour = p[K.quietEnd] ?: d.quietEndHour,
+            dailySummary = p[K.dailySummary] ?: d.dailySummary,
         )
     }
 
@@ -132,6 +191,20 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
             p[K.sound] = n.alertSound
             p[K.design] = n.designCapacityMah.coerceIn(0, 30_000)
             p[K.retention] = n.retentionDays.coerceAtLeast(0)
+            p[K.overlay] = n.overlayEnabled
+            p[K.overlayCorner] = n.overlayCorner.name
+            p[K.overlaySize] = n.overlaySize.name
+            p[K.overlayX] = n.overlayX
+            p[K.overlayY] = n.overlayY
+            p[K.overlayDrag] = n.overlayDraggable
+            p[K.overlayColor] = n.overlayColor.name
+            p[K.overlayWatts] = n.overlayShowWatts
+            p[K.overlayTemp] = n.overlayShowTemp
+            p[K.targetAlarm] = n.targetAlarm
+            p[K.quiet] = n.quietHoursEnabled
+            p[K.quietStart] = n.quietStartHour.coerceIn(0, 23)
+            p[K.quietEnd] = n.quietEndHour.coerceIn(0, 23)
+            p[K.dailySummary] = n.dailySummary
         }
     }
 

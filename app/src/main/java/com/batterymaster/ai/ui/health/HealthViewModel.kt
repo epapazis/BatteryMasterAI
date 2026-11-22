@@ -6,6 +6,11 @@ import com.batterymaster.ai.data.prefs.SettingsRepository
 import com.batterymaster.ai.data.repo.BatteryRepository
 import com.batterymaster.ai.data.repo.HistoryRepository
 import com.batterymaster.ai.domain.health.HealthSummary
+import com.batterymaster.ai.domain.insights.HealthTrend
+import com.batterymaster.ai.domain.insights.HealthTrendCalculator
+import com.batterymaster.ai.domain.insights.WearCalculator
+import com.batterymaster.ai.domain.insights.WearStats
+import com.batterymaster.ai.domain.model.SessionType
 import com.batterymaster.ai.domain.model.BatterySnapshot
 import com.batterymaster.ai.domain.model.CapacityEstimate
 import com.batterymaster.ai.domain.prediction.CapacityForecast
@@ -25,6 +30,8 @@ data class HealthUiState(
     val forecast: CapacityForecast? = null,
     val snapshot: BatterySnapshot? = null,
     val designCapacityMah: Int = 0,
+    val wear: WearStats? = null,
+    val trend: HealthTrend? = null,
 )
 
 @HiltViewModel
@@ -40,13 +47,16 @@ class HealthViewModel @Inject constructor(
         history.observeEstimates(),
         battery.live,
         settings.settings,
-    ) { summary, est, snap, s ->
+        history.observeRecentSessions(SessionType.CHARGE, 5_000),
+    ) { summary, est, snap, s, charges ->
         HealthUiState(
             summary = summary,
             estimates = est.sortedByDescending { it.timestamp },
             forecast = CapacityForecaster.forecast(est),
             snapshot = snap,
             designCapacityMah = s.designCapacityMah,
+            wear = WearCalculator.compute(charges),
+            trend = HealthTrendCalculator.compute(est),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HealthUiState())
 

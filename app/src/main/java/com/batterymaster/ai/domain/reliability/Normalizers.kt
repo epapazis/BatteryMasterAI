@@ -110,23 +110,28 @@ object CurrentNormalizer {
         }
         val ma = if (cal.unit == CurrentUnit.MICROAMPS) raw / 1000 else raw
         val mode = cal.signMode
-        val signed = when (mode) {
-            SignMode.STANDARD, SignMode.UNKNOWN -> ma
-            SignMode.INVERTED -> -ma
-            SignMode.MAGNITUDE_ONLY -> if (pluggedIn) abs(ma) else -abs(ma)
+        val fromPlug = if (pluggedIn) abs(ma) else -abs(ma)
+        // Until both charging and unplugged readings have confirmed this device's convention,
+        // the direction is taken from the plug state, so a draining phone never shows "+".
+        val signed = when {
+            !cal.signConfirmed -> fromPlug
+            mode == SignMode.STANDARD -> ma
+            mode == SignMode.INVERTED -> -ma
+            else -> fromPlug
         }
         if (abs(signed) > MAX_PLAUSIBLE_MA) return Reading.Unavailable("Implausible value rejected ($signed mA)")
         val confidence = when {
-            mode == SignMode.UNKNOWN -> Confidence.LOW
+            !cal.signConfirmed -> Confidence.MEDIUM
+            mode == SignMode.STANDARD || mode == SignMode.INVERTED -> Confidence.HIGH
             mode == SignMode.MAGNITUDE_ONLY -> Confidence.MEDIUM
-            cal.signConfirmed -> Confidence.HIGH
-            else -> Confidence.MEDIUM
+            else -> Confidence.LOW
         }
-        val note = when (mode) {
-            SignMode.UNKNOWN -> "Direction not yet verified on this device"
-            SignMode.MAGNITUDE_ONLY -> "Direction inferred from plug state"
-            SignMode.INVERTED -> "Device reports inverted sign; corrected"
-            SignMode.STANDARD -> null
+        val note = when {
+            !cal.signConfirmed -> "Direction taken from plug state until verified on this device"
+            mode == SignMode.MAGNITUDE_ONLY -> "Direction inferred from plug state"
+            mode == SignMode.INVERTED -> "Device reports inverted sign; corrected"
+            mode == SignMode.UNKNOWN -> "Device direction inconsistent; using plug state"
+            else -> null
         }
         return Reading.Available(
             Measurement(signed, "mA", timestamp, source, DataClass.DIRECT_MEASUREMENT, confidence, note),

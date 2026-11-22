@@ -94,7 +94,7 @@ class MonitoringService : Service() {
         private const val TAG = "MonitoringService"
         const val ACTION_STOP = "com.batterymaster.ai.STOP_MONITORING"
         const val SOURCE = "SERVICE"
-        private const val POLL_MS = 60_000L
+        private const val POLL_MS = 30_000L
 
         fun start(context: Context) {
             ContextCompat.startForegroundService(context, Intent(context, MonitoringService::class.java))

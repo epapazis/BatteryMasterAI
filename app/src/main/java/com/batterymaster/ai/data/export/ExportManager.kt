@@ -131,6 +131,8 @@ class ExportManager @Inject constructor(
         h2.textSize = 13f
         line("How the score works", h2)
         DoctorReport.SCORING_CRITERIA.forEach { line("• $it", body, 2f) }
+        val developer = context.getString(com.batterymaster.ai.R.string.developer_name)
+        if (developer.isNotBlank()) line("Battery Master AI · developed by $developer", body, 2f)
         doc.finishPage(page)
 
         val file = File(exportDir(), "battery-report.pdf")

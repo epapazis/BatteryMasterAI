@@ -14,6 +14,8 @@ data class SamplePoint(
     val currentConfidence: Confidence?,
     val chargeCounterMah: Int?,
     val screenOn: Boolean,
+    /** Package on screen when recorded; null if unknown or Usage access not granted. */
+    val foregroundApp: String? = null,
 ) {
     val pluggedIn: Boolean get() = plug != PlugType.NONE
 }

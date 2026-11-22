@@ -5,8 +5,13 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.batterymaster.ai.background.MonitoringService
+import com.batterymaster.ai.background.OverlayService
 import com.batterymaster.ai.data.export.ExportManager
 import com.batterymaster.ai.data.prefs.AppSettings
+import com.batterymaster.ai.data.backup.BackupManager
+import com.batterymaster.ai.data.prefs.OverlayColor
+import com.batterymaster.ai.data.prefs.OverlayCorner
+import com.batterymaster.ai.data.prefs.OverlaySize
 import com.batterymaster.ai.data.prefs.SettingsRepository
 import com.batterymaster.ai.data.prefs.ThemeMode
 import com.batterymaster.ai.data.protection.ChargingControlEngine
@@ -43,6 +48,7 @@ class SettingsViewModel @Inject constructor(
     private val insights: InsightsUseCase,
     private val export: ExportManager,
     private val protection: ChargingControlEngine,
+    private val backup: BackupManager,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -74,6 +80,38 @@ class SettingsViewModel @Inject constructor(
     fun setTempC(c: Float) = edit { it.copy(tempAlertC = c) }
     fun setSound(on: Boolean) = edit { it.copy(alertSound = on) }
     fun setRetention(days: Int) = edit { it.copy(retentionDays = days) }
+    /** Picking a corner also clears any dragged position. */
+    fun setOverlayCorner(c: OverlayCorner) = edit { it.copy(overlayCorner = c, overlayX = -1, overlayY = -1) }
+    fun setOverlayDraggable(on: Boolean) = edit { it.copy(overlayDraggable = on) }
+    fun setOverlayColor(c: OverlayColor) = edit { it.copy(overlayColor = c) }
+    fun setOverlayWatts(on: Boolean) = edit { it.copy(overlayShowWatts = on) }
+    fun setOverlayTemp(on: Boolean) = edit { it.copy(overlayShowTemp = on) }
+    fun setTargetAlarm(on: Boolean) = edit { it.copy(targetAlarm = on) }
+    fun setQuietHours(on: Boolean) = edit { it.copy(quietHoursEnabled = on) }
+    fun setQuietStart(h: Int) = edit { it.copy(quietStartHour = h) }
+    fun setQuietEnd(h: Int) = edit { it.copy(quietEndHour = h) }
+    fun setDailySummary(on: Boolean) = edit { it.copy(dailySummary = on) }
+
+    fun exportBackup(uri: Uri) = viewModelScope.launch {
+        message.value = runCatching { backup.export(uri) }
+            .fold({ "Backup saved" }, { "Backup failed: ${it.message}" })
+    }
+
+    /** On success the app restarts with the restored history. */
+    fun restoreBackup(uri: Uri) = viewModelScope.launch {
+        runCatching { backup.restore(uri) }.onFailure { message.value = "Restore failed: ${it.message}" }
+    }
+    fun setOverlaySize(sz: OverlaySize) = edit { it.copy(overlaySize = sz) }
+
+    /** Call only after "Display over other apps" was granted when enabling. */
+    fun setOverlay(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepo.update { it.copy(overlayEnabled = enabled) }
+            runCatching {
+                if (enabled) OverlayService.start(context) else OverlayService.stop(context)
+            }.onFailure { message.value = "Couldn't change the overlay: ${it.message}" }
+        }
+    }
 
     fun setMonitoring(enabled: Boolean) {
         viewModelScope.launch {

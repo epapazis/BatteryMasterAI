@@ -58,6 +58,8 @@ fun HomeScreen(
     onOpenDoctor: () -> Unit,
     onOpenAnalytics: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenApps: () -> Unit = {},
+    onOpenChargerTest: () -> Unit = {},
     vm: HomeViewModel = hiltViewModel(),
 ) {
     val st by vm.state.collectAsStateWithLifecycle()
@@ -177,6 +179,10 @@ fun HomeScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(onClick = onOpenDoctor) { Text(stringResource(R.string.open_doctor)) }
                     OutlinedButton(onClick = onOpenAnalytics) { Text(stringResource(R.string.open_charts)) }
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(onClick = onOpenApps) { Text(stringResource(R.string.apps_title)) }
+                    OutlinedButton(onClick = onOpenChargerTest) { Text(stringResource(R.string.charger_test_title)) }
                 }
             }
         }

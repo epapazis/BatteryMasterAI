@@ -10,6 +10,20 @@
     <!-- Restart monitoring after reboot if the user had it enabled. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Optional live-current overlay, only after the user enables it and grants "Display over other apps". -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- Optional per-app usage estimate: the user grants "Usage access" in system settings. -->
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- Lets the per-app list show names/icons of launchable apps (Android 11+ package visibility). -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
 
     <application
         android:name=".BatteryMasterApp"
@@ -43,6 +57,15 @@
                 android:value="User-enabled continuous battery monitoring: records battery level, temperature, voltage and current changes reported by ACTION_BATTERY_CHANGED and alerts the user when their chosen charging target or temperature limit is reached." />
         </service>
 
+        <service
+            android:name=".background.OverlayService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-enabled on-screen overlay that shows the live battery current (mA) on top of other apps, refreshed once per second while the screen is on." />
+        </service>
+
         <receiver
             android:name=".background.BootReceiver"
             android:exported="false">
@@ -62,6 +85,42 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/battery_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.CurrentWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_current_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_current_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.TempWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_temp_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_temp_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.HealthWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_health_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_health_info" />
         </receiver>
 
         <service

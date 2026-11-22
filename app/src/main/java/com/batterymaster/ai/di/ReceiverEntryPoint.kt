@@ -3,6 +3,7 @@ package com.batterymaster.ai.di
 import android.content.Context
 import com.batterymaster.ai.data.prefs.SettingsRepository
 import com.batterymaster.ai.data.repo.BatteryRepository
+import com.batterymaster.ai.widget.WidgetUpdater
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -17,6 +18,7 @@ import dagger.hilt.components.SingletonComponent
 interface ReceiverEntryPoint {
     fun settings(): SettingsRepository
     fun battery(): BatteryRepository
+    fun widgets(): WidgetUpdater
 
     companion object {
         fun get(context: Context): ReceiverEntryPoint =

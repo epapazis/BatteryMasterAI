@@ -8,6 +8,8 @@ import com.batterymaster.ai.data.prefs.AppSettings
 import com.batterymaster.ai.data.prefs.SettingsRepository
 import com.batterymaster.ai.data.repo.BatteryRepository
 import com.batterymaster.ai.data.repo.HistoryRepository
+import com.batterymaster.ai.domain.insights.SleepAnalyzer
+import com.batterymaster.ai.domain.insights.SleepResult
 import com.batterymaster.ai.domain.model.BatterySnapshot
 import com.batterymaster.ai.domain.model.CapacityEstimate
 import com.batterymaster.ai.domain.model.SamplePoint
@@ -58,21 +60,27 @@ data class PowerUiState(
     val timeToTarget: Prediction? = null,
     val timeToFull: Prediction? = null,
     val runtime: Prediction? = null,
+    val sleep: SleepResult? = null,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class PowerViewModel @Inject constructor(
     battery: BatteryRepository,
-    history: HistoryRepository,
+    private val history: HistoryRepository,
     settings: SettingsRepository,
     private val insights: InsightsUseCase,
 ) : ViewModel() {
 
     private val avgDrain = MutableStateFlow<Float?>(null)
+    private val sleep = MutableStateFlow<SleepResult?>(null)
 
     init {
-        viewModelScope.launch { avgDrain.value = insights.averageDrain7d() }
+        viewModelScope.launch {
+            avgDrain.value = insights.averageDrain7d()
+            val now = System.currentTimeMillis()
+            sleep.value = SleepAnalyzer.longestScreenOff(history.samples(now - 24 * 3_600_000L, now))
+        }
     }
 
     private val open = history.observeOpenSession()
@@ -86,8 +94,9 @@ class PowerViewModel @Inject constructor(
     ) { c, d, p -> Triple(c, d, p) }
 
     val state: StateFlow<PowerUiState> = combine(
-        battery.live, settings.settings, combine(open, openSamples) { o, s -> o to s }, lists, avgDrain,
-    ) { snap, s, (openSession, samples), (charges, discharges, events), drain ->
+        battery.live, settings.settings, combine(open, openSamples) { o, s -> o to s }, lists,
+        combine(avgDrain, sleep) { d, sl -> d to sl },
+    ) { snap, s, (openSession, samples), (charges, discharges, events), (drain, sleepResult) ->
         val now = snap.timestamp
         val closedCharges = charges.filter { !it.isOpen }
         val closedDis = discharges.filter { !it.isOpen }
@@ -109,6 +118,7 @@ class PowerViewModel @Inject constructor(
                 RuntimePredictor.minutesToTarget(samples, snap.levelPct, 100, now, snap.chargeTimeRemainingMs.valueOrNull)
             } else null,
             runtime = if (!snap.isPluggedIn) RuntimePredictor.dischargeRemainingMinutes(samples, snap.levelPct, now, drain) else null,
+            sleep = sleepResult,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PowerUiState())
 

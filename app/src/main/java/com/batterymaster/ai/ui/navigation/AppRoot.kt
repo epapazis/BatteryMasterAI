@@ -32,6 +32,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.batterymaster.ai.R
 import com.batterymaster.ai.ui.analytics.AnalyticsScreen
+import com.batterymaster.ai.ui.apps.AppsScreen
+import com.batterymaster.ai.ui.chargertest.ChargerTestScreen
 import com.batterymaster.ai.ui.doctor.DoctorScreen
 import com.batterymaster.ai.ui.health.HealthScreen
 import com.batterymaster.ai.ui.home.HomeScreen
@@ -49,6 +51,8 @@ private enum class TopLevel(val route: String, @StringRes val label: Int, val ic
 
 private const val SETTINGS = "settings"
 private const val SESSION = "session/{id}"
+private const val APPS = "apps"
+private const val CHARGER_TEST = "charger_test"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +71,8 @@ fun AppRoot() {
                             top != null -> stringResource(top.label)
                             route == SETTINGS -> stringResource(R.string.nav_settings)
                             route == SESSION -> stringResource(R.string.session_details)
+                            route == APPS -> stringResource(R.string.apps_title)
+                            route == CHARGER_TEST -> stringResource(R.string.charger_test_title)
                             else -> stringResource(R.string.app_name)
                         },
                     )
@@ -110,6 +116,8 @@ fun AppRoot() {
                     onOpenDoctor = { nav.navigateTopLevel(TopLevel.DOCTOR.route) },
                     onOpenAnalytics = { nav.navigateTopLevel(TopLevel.ANALYTICS.route) },
                     onOpenSettings = { nav.navigate(SETTINGS) },
+                    onOpenApps = { nav.navigate(APPS) },
+                    onOpenChargerTest = { nav.navigate(CHARGER_TEST) },
                 )
             }
             composable(TopLevel.HEALTH.route) { HealthScreen(padding) }
@@ -117,6 +125,8 @@ fun AppRoot() {
             composable(TopLevel.ANALYTICS.route) { AnalyticsScreen(padding) }
             composable(TopLevel.DOCTOR.route) { DoctorScreen(padding) }
             composable(SETTINGS) { SettingsScreen(padding) }
+            composable(APPS) { AppsScreen(padding) }
+            composable(CHARGER_TEST) { ChargerTestScreen(padding) }
             composable(SESSION, arguments = listOf(navArgument("id") { type = NavType.LongType })) {
                 SessionDetailScreen(padding)
             }

@@ -23,6 +23,8 @@ data class SampleEntity(
     val screenOn: Boolean,
     /** SERVICE or WORKER. */
     val source: String,
+    /** Package that was on screen when recorded (needs Usage access), else null. Added in schema v2. */
+    val foregroundApp: String? = null,
 )
 
 @Entity(
@@ -79,6 +81,20 @@ data class ProtectionEventEntity(
     val levelPct: Int,
     val method: String,
     val outcome: String,
+)
+
+@Entity(tableName = "charger_tests", indices = [Index("timestamp")])
+data class ChargerTestEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val timestamp: Long,
+    val label: String,
+    val avgCurrentMa: Int,
+    val peakCurrentMa: Int,
+    val avgPowerW: Float?,
+    val startLevel: Int,
+    val endLevel: Int,
+    val temperatureC: Float?,
+    val durationSec: Int,
 )
 
 /** Result row for SQL-side time-bucket aggregation. */

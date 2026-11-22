@@ -80,14 +80,28 @@ fun BatteryMasterTheme(
     val dark = when (themeMode) {
         ThemeMode.SYSTEM -> isSystemInDarkTheme()
         ThemeMode.LIGHT -> false
-        ThemeMode.DARK -> true
+        ThemeMode.DARK, ThemeMode.AMOLED -> true
     }
     val ctx = LocalContext.current
-    val scheme = when {
+    val base = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
             if (dark) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)
         dark -> DarkColors
         else -> LightColors
+    }
+    // True black for OLED screens: black pixels are switched off and use no power.
+    val scheme = if (themeMode == ThemeMode.AMOLED) {
+        base.copy(
+            background = Color.Black,
+            surface = Color.Black,
+            surfaceContainerLowest = Color.Black,
+            surfaceContainerLow = Color(0xFF060606),
+            surfaceContainer = Color(0xFF0C0C0C),
+            surfaceContainerHigh = Color(0xFF141414),
+            surfaceContainerHighest = Color(0xFF1C1C1C),
+        )
+    } else {
+        base
     }
     androidx.compose.runtime.CompositionLocalProvider(LocalDataColors provides if (dark) DarkData else LightData) {
         MaterialTheme(colorScheme = scheme, content = content)

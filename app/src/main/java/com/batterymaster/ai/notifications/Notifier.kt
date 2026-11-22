@@ -9,6 +9,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -29,11 +31,15 @@ class Notifier @Inject constructor(@ApplicationContext private val context: Cont
         const val CH_MONITOR = "monitoring"
         const val CH_ALERTS = "alerts"
         const val CH_ALERTS_QUIET = "alerts_quiet"
+        const val CH_ALARM = "charge_alarm"
+        const val CH_SUMMARY = "daily_summary"
         const val ID_MONITOR = 1
+        const val ID_OVERLAY = 2
         private const val ID_TARGET = 10
         private const val ID_FULL = 11
         private const val ID_LOW = 12
         private const val ID_TEMP = 13
+        private const val ID_SUMMARY = 20
     }
 
     fun createChannels() {
@@ -51,7 +57,23 @@ class Notifier @Inject constructor(@ApplicationContext private val context: Cont
             setSound(null, null)
             enableVibration(false)
         }
-        nm.createNotificationChannels(listOf(monitor, alerts, quiet))
+        val alarm = NotificationChannel(CH_ALARM, context.getString(R.string.channel_alarm), NotificationManager.IMPORTANCE_HIGH).apply {
+            description = context.getString(R.string.channel_alarm_desc)
+            setSound(
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build(),
+            )
+            enableVibration(true)
+            vibrationPattern = longArrayOf(0, 600, 400, 600, 400, 600)
+            setBypassDnd(false)
+        }
+        val summary = NotificationChannel(CH_SUMMARY, context.getString(R.string.channel_summary), NotificationManager.IMPORTANCE_LOW).apply {
+            description = context.getString(R.string.channel_summary_desc)
+        }
+        nm.createNotificationChannels(listOf(monitor, alerts, quiet, alarm, summary))
     }
 
     fun canNotify(): Boolean {
@@ -86,12 +108,30 @@ class Notifier @Inject constructor(@ApplicationContext private val context: Cont
             .build()
     }
 
+    fun overlayNotification(): Notification =
+        NotificationCompat.Builder(context, CH_MONITOR)
+            .setSmallIcon(R.drawable.ic_stat_battery)
+            .setContentTitle(context.getString(R.string.overlay_notification_title))
+            .setContentText(context.getString(R.string.overlay_notification_text))
+            .setOngoing(true)
+            .setSilent(true)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .setContentIntent(openAppIntent())
+            .build()
+
     fun updateMonitoring(s: BatterySnapshot) {
         if (!canNotify()) return
         notifySafely(ID_MONITOR, monitoringNotification(s))
     }
 
-    fun showAlert(type: AlertType, s: BatterySnapshot, targetPct: Int, tempLimit: Float, withSound: Boolean) {
+    fun showAlert(
+        type: AlertType,
+        s: BatterySnapshot,
+        targetPct: Int,
+        tempLimit: Float,
+        withSound: Boolean,
+        asAlarm: Boolean = false,
+    ) {
         if (!canNotify()) return
         val (id, title, text) = when (type) {
             AlertType.TARGET_REACHED -> Triple(ID_TARGET, context.getString(R.string.alert_target_title, targetPct),
@@ -104,7 +144,13 @@ class Notifier @Inject constructor(@ApplicationContext private val context: Cont
                 context.getString(R.string.alert_temp_title, s.temperatureC.valueOrNull ?: tempLimit),
                 context.getString(R.string.alert_temp_text))
         }
-        val n = NotificationCompat.Builder(context, if (withSound) CH_ALERTS else CH_ALERTS_QUIET)
+        val alarm = asAlarm && type == AlertType.TARGET_REACHED
+        val channel = when {
+            alarm -> CH_ALARM
+            withSound -> CH_ALERTS
+            else -> CH_ALERTS_QUIET
+        }
+        val n = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_stat_battery)
             .setContentTitle(title)
             .setContentText(text)
@@ -112,8 +158,29 @@ class Notifier @Inject constructor(@ApplicationContext private val context: Cont
             .setAutoCancel(true)
             .setPriority(if (withSound) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(openAppIntent())
+            .setCategory(if (alarm) NotificationCompat.CATEGORY_ALARM else NotificationCompat.CATEGORY_STATUS)
             .build()
+        // Alarm style keeps ringing until the user taps/dismisses it or unplugs.
+        if (alarm) n.flags = n.flags or Notification.FLAG_INSISTENT
         notifySafely(id, n)
+    }
+
+    /** Stops a ringing target alarm (called when the charger is unplugged). */
+    fun cancelTargetAlarm() {
+        NotificationManagerCompat.from(context).cancel(ID_TARGET)
+    }
+
+    fun showDailySummary(title: String, text: String) {
+        if (!canNotify()) return
+        val n = NotificationCompat.Builder(context, CH_SUMMARY)
+            .setSmallIcon(R.drawable.ic_stat_battery)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setAutoCancel(true)
+            .setContentIntent(openAppIntent())
+            .build()
+        notifySafely(ID_SUMMARY, n)
     }
 
     @SuppressLint("MissingPermission") // checked in canNotify()

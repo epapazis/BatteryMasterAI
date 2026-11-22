@@ -26,6 +26,7 @@ fun SampleEntity.toPoint() = SamplePoint(
     currentConfidence = currentConfidence?.let { safeEnum(it, Confidence.NONE) },
     chargeCounterMah = chargeCounterMah,
     screenOn = screenOn,
+    foregroundApp = foregroundApp,
 )
 
 fun BatterySnapshot.toPoint() = SamplePoint(
@@ -41,7 +42,7 @@ fun BatterySnapshot.toPoint() = SamplePoint(
     screenOn = screenOn,
 )
 
-fun BatterySnapshot.toEntity(source: String) = SampleEntity(
+fun BatterySnapshot.toEntity(source: String, foregroundApp: String? = null) = SampleEntity(
     timestamp = timestamp,
     levelPct = levelPct,
     status = status.name,
@@ -53,6 +54,7 @@ fun BatterySnapshot.toEntity(source: String) = SampleEntity(
     chargeCounterMah = chargeCounterMah.valueOrNull,
     screenOn = screenOn,
     source = source,
+    foregroundApp = foregroundApp,
 )
 
 fun SessionEntity.toSummary() = SessionSummary(

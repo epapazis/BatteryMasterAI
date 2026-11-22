@@ -30,7 +30,7 @@ class DatabaseTest {
 
     @Before fun setUp() {
         db = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), AppDatabase::class.java).build()
-        history = HistoryRepository(db, db.sampleDao(), db.sessionDao(), db.capacityDao(), db.protectionDao())
+        history = HistoryRepository(db, db.sampleDao(), db.sessionDao(), db.capacityDao(), db.protectionDao(), db.chargerTestDao())
         sessions = SessionManager(db, db.sessionDao(), db.sampleDao(), db.capacityDao())
     }
 

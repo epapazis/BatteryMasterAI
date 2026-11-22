@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.batterymaster.ai.R
+import com.batterymaster.ai.domain.insights.SleepVerdict
 import com.batterymaster.ai.domain.model.DataClass
 import com.batterymaster.ai.domain.model.SessionSummary
 import com.batterymaster.ai.domain.model.SessionType
@@ -149,6 +150,25 @@ fun PowerScreen(padding: PaddingValues, onOpenSession: (Long) -> Unit, vm: Power
                 }
                 sessionList(chargingHistoryTitle, st.charges, onOpenSession)
             } else {
+                st.sleep?.let { sl ->
+                    item {
+                        AppCard {
+                            Text(stringResource(R.string.sleep_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                            val c = when (sl.verdict) {
+                                SleepVerdict.EXCELLENT -> colors.good
+                                SleepVerdict.NORMAL -> colors.measured
+                                SleepVerdict.HIGH -> colors.warning
+                            }
+                            Text(sl.verdict.label, color = c, style = MaterialTheme.typography.bodyLarge)
+                            InfoRow("Screen off", "${Format.dateTime(sl.start)} – ${Format.time(sl.end)} (${Format.durationMs(sl.durationMs)})")
+                            InfoRow("Battery used", "${sl.dropPct}% · ${Format.num(sl.ratePctPerHour, 2)} %/h")
+                            sl.avgMa?.let { InfoRow("Average draw", "$it mA") }
+                            if (sl.verdict == SleepVerdict.HIGH) {
+                                Text(stringResource(R.string.sleep_high_tip), style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                    }
+                }
                 st.dischargeStats?.let { ds -> item { GroupStatsCard(stringResource(R.string.discharge_analysis_7d), ds, false) } }
                 if (st.discharges.size >= 2) {
                     item {

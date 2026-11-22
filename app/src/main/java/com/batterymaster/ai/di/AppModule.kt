@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.batterymaster.ai.data.db.AppDatabase
 import com.batterymaster.ai.data.db.CapacityDao
+import com.batterymaster.ai.data.db.ChargerTestDao
 import com.batterymaster.ai.data.db.ProtectionDao
 import com.batterymaster.ai.data.db.SampleDao
 import com.batterymaster.ai.data.db.SessionDao
@@ -42,4 +43,5 @@ object AppModule {
     @Provides fun sessionDao(db: AppDatabase): SessionDao = db.sessionDao()
     @Provides fun capacityDao(db: AppDatabase): CapacityDao = db.capacityDao()
     @Provides fun protectionDao(db: AppDatabase): ProtectionDao = db.protectionDao()
+    @Provides fun chargerTestDao(db: AppDatabase): ChargerTestDao = db.chargerTestDao()
 }
